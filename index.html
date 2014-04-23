@@ -23,7 +23,7 @@
     var current_item = -1;
     var menu_experiment; 
     var is_ephemeral = false;
-    var SEQ_LENGTH = 2;
+    var SEQ_LENGTH = 8;
 
     // Creates HTML for pre questionnaire.
     var pre_questionnaire = function () {
@@ -340,7 +340,7 @@
         menu_experiment.run();
 
         $("#questionnaire").click(function (event, ui) {
-            var form = "<iframe src='https://docs.google.com/forms/d/1uQWXZ37Yh_ZlCy_rEnvCys5ejy2tgHdQLqDpUOY_Fq8/viewform?embedded=true' width='760' height='500' frameborder='0' marginheight='0' marginwidth='0'>Loading...</iframe><br><br><div class='button' id='next'>Next</div>";
+            var form = "<iframe src='https://docs.google.com/forms/d/1s-LEk4saFZjyfQYqQEtwz2OQMWFg2EYFfD1jnGpoXJk/viewform?embedded=true' width='760' height='500' frameborder='0' marginheight='0' marginwidth='0'>Loading...</iframe><br><br><div class='button' id='next'>Next</div>";
 
             $(".user-questions").html(form);
             $(".button").button();

@@ -23,7 +23,7 @@
     var current_item = -1;
     var menu_experiment; 
     var is_ephemeral = false;
-    var SEQ_LENGTH = 2;
+    var SEQ_LENGTH = 8;
 
     // Creates HTML for pre questionnaire.
     function pre_questionnaire() {
@@ -184,133 +184,6 @@
             }
         }
 
-    }
-
-    function Experiment(tasks, menus, random_sequences) {
-        this.choices;
-        this.last_selections;
-        this.tasks = tasks;
-        this.menus = menus;
-        this.random_sequences = random_sequences;
-        this.current_index = 0;
-
-        this.run = function() {
-            this.init_adaptive();
-            this.next();
-        }
-
-        // Resets all tems back to fading.
-        this.set_ephemeral = function() {
-            is_ephemeral = true;
-
-            for (var i=0; i<3; i++) {
-                for (var j=0; j<16; j++) {
-                    var id = "#m" + i + "i" + j;
-                    $(id).fadeTo(0, 0);
-                    $(id).attr("class", "item ui-menu-item");
-                }
-            }
-        }
-
-        // Initializes algorithm.
-        this.init_adaptive = function () {
-            var menu1_choices = this.random_sequences[0].slice(0, 3);
-            var menu2_choices = this.random_sequences[1].slice(0, 3);
-            var menu3_choices = this.random_sequences[2].slice(0, 3);
-            this.last_selections = [menu1_choices[0], menu2_choices[0], menu3_choices[0]];
-            this.choices = [menu1_choices, menu2_choices, menu3_choices];
-        }
-
-        // Checks if most recently selected is among top 2 most frequently selected.
-        this.has_overlap = function (index) {
-            if ((this.last_selections[index]==this.choices[index][0])||(this.last_selections[index]==this.choices[index][1])) {
-                return true;
-            }
-            return false;
-        }
-
-        // Determines which 3 items are not faded in.
-        this.generate_adaptive = function () {
-            var selections = [];
-            for (var i=0; i<3; i++) {
-                var new_set = this.choices[i];
-                if (!this.has_overlap(i)) {
-                    new_set = [this.choices[i][0], this.choices[i][1], this.last_selections[i]];
-                }
-
-                if (i == current_menu) {
-                    if (!this.is_correct(new_set)) {
-                        new_set = this.randomly_fix(new_set);
-                    }
-                }
-
-                selections.push(new_set);
-            }
-
-            return selections;
-
-        }
-
-        // Check if adaptive algorithm is incorrect.
-        this.is_correct = function(new_set) {
-            for (var j=0; j<3; j++) {
-                if (new_set[j] == current_item) {
-                    return true;
-                }
-            } 
-            return false;
-        }
-
-
-        // Gives selected menu items fixed-no fading property.
-        this.set_adaptive = function(selections) {
-            for (var i=0; i<3; i++) {
-                for (var j=0; j<3; j++) {
-                    var id = "#m" + i + "i" + selections[i][j].toString();
-                    $(id).attr("class", "selected ui-menu-item");
-                    $(id).fadeTo(0, 1);
-                }
-            }
-        }
-
-        this.randomly_fix = function (selections) {
-            var prob_incorrect = 1 - 0.645;
-            var prob_correction = 18/(prob_incorrect*126);
-            var coin_flip = Math.random();
-            if (coin_flip < prob_correction) {
-                selections[Math.round(Math.random())] = current_item;
-            }
-            return selections;
-        }
-
-        this.has_tasks = function() {
-            //return this.current_index != 126;
-            return this.current_index != SEQ_LENGTH;
-        }
-
-        this.next = function() {
-            if (this.has_tasks()) {
-                current_menu = this.tasks[this.current_index][0];
-                current_item = this.tasks[this.current_index][1];
-
-                $("#menu-selection").html(current_menu+1);
-                $("#task-selection").html(this.menus[current_menu][current_item]);
-                this.set_ephemeral();
-                var adaptive_selections = this.generate_adaptive();
-
-                this.set_adaptive(adaptive_selections);
-                console.log(this.current_index + " Prompted at: " + $.now());
-
-                this.current_index++;
-                this.last_selections[current_menu] = current_item;
-            } else {
-                // Fill in functionality at end of ephemeral experiment.
-                var message = "Practice period complete. Please click the next button at the bottom of the page to begin the experiment with condition #2.";
-                $(".container").hide();
-                $(".user-questions").html(message);
-
-            }
-        }
     }
 
 
